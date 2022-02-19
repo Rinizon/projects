@@ -1,2 +1,2 @@
 # vscode
-My general files as I larn these things.
+My general files as I learn these things.
