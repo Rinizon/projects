@@ -1,0 +1,33 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: create the 'kube' user
+      user: name=kube append=yes state=present createhome=yes shell=/bin/bash
+
+    - name: allow 'kube' to have passwordless sudo
+      lineinfile:
+        dest: /etc/sudoers
+        line: 'kube ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
+
+    - name: set up authorized keys for the kube user
+      authorized_key: user=kube key="{{item}}"
+      with_file:
+        - ~/.ssh/id_rsa.pub
+
+    - name: Update all installed packages using APT module
+      apt:
+        name: '*'
+        state: latest
+        update_cache: yes
+        only_upgrade: yes
+      register: apt_update_status
+
+    - name: Remove packages not needed anymore
+      apt:
+        autoremove: yes
+
+    - name: Reboot when packages were updated
+      reboot:
+        post_reboot_delay: 60
+      when: apt_update_status.changed
