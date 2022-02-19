@@ -1,0 +1,9 @@
+---
+mysql_root_password: "2eJpVKBtG9u"
+app_user: "rkane"
+http_host: "rinizon.com"
+http_conf: "rinizon.com.conf"
+http_port: "80"
+https_port: "443"
+ssh_port: "22"  
+disable_default: true
