@@ -1,0 +1,121 @@
+
+---
+- hosts: all
+  become: true
+  vars_files:
+    - vars.yml
+    - vault
+  tasks:
+    - name: import secret variable file
+      include_vars: "vault"
+      no_log: true
+    
+    - name: set hostname
+      hostname:
+        name: "{{ hostname }}"
+    
+    - name: test to see if selinux is running
+      command: getenforce
+      register: sestatus
+      changed_when: false
+   
+  #Apache configuration 
+    - name: Install LAMP packages
+      yum: name={{ item }} update_cache=yes state=latest
+      loop: [ 'httpd', 'mariadb-server', 'mariadb', 'php', 'php-fpm', 'php-mysql', 'php-gd', 'php-pear','firewalld' ]
+
+    - name: Create document root
+      file:
+        path: "/var/www/{{ http_host }}"
+        state: directory
+        owner: "{{ app_user }}"
+        mode: '0755'   
+    
+    
+    - name: Create a new PHP info file
+      file: path="/var/www/html/info.php" state=touch
+    
+    - name: Check that new PHP info file exists
+      stat: path="/var/www/html/info.php"
+      register: file_path
+    
+    - name: Add content to PHP info file
+      copy: content="<?php phpinfo(); ?>" dest="/var/www/html/info.php"
+      when: file_path.stat.exists == true
+    
+    - name: enable service httpd and ensure it is not masked
+      systemd:
+        name: httpd
+        enabled: yes
+        masked: no
+    
+    - name: enable service mariadb and ensure it is not masked
+      systemd:
+        name: mariadb
+        enabled: yes
+        masked: no
+
+    - name: enable service firewalld and ensure it is not masked
+      systemd:
+        name: firewalld
+        enabled: yes
+        masked: no
+    
+    - name: Make sure httpd service is running
+      systemd: state=started name=httpd
+    
+    - name: Make sure mariadb is running
+      systemd: state=started name=mariadb
+    
+    - name: Make sure firewalld is running
+      systemd: state=started name=firewalld
+
+    - name: Add ssh service to firewalld config
+      firewalld:
+        service: ssh
+        permanent: true
+        state: enabled
+
+    - name: Add http service to firewalld config
+      firewalld:
+        service: http
+        permanent: true
+        state: enabled
+
+    - name: Add https service to firewalld config
+      firewalld:
+        service: https
+        permanent: true
+        state: enabled
+
+    - name: restart firewalld
+      service: name=firewalld state=restarted
+
+    - name: check Kernel is the latest
+      shell: if [ $(uname -r) == $(rpm -q kernel | tail -n 1 | sed -e 's/kernel-//g') ] ; then echo no ; else echo reboot; fi
+      ignore_errors: true
+      register: reboot_hint
+    
+    - name: make sure cloud-init is not installed
+      yum:
+        name: cloud-init
+        state: absent
+    
+    - name: restart lamp machine to get updated kernel
+      shell: sleep 2 && shutdown -r now "Ansible Restart Triggered for LAMP Install"
+      async: 1
+      poll: 0
+      ignore_errors: true
+      when: yum_result.changed or reboot_hint.stdout.find("reboot") != -1
+    
+    - name: waiting for server to come back
+      wait_for:
+        host: "{{ inventory_hostname }}"
+        state: started
+        delay: 10
+        connect_timeout: 5
+        timeout: 300
+        port: 22
+      delegate_to: 127.0.0.1
+      become: false
+      ignore_errors: true
