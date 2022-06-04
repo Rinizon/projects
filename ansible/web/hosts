@@ -1,9 +1,8 @@
 
 [servers]
-web ansible_host=20.51.242.236
+web ansible_host=20.51.248.138
 #web2 ansible_host=188.166.115.68
 #web3 ansible_host=188.166.123.245
 
 [servers:vars]
 ansible_python_interpreter=/usr/bin/python3
-
