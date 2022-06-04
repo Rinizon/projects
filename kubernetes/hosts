@@ -1,9 +1,6 @@
-[masters]
-kube ansible_host=192.168.50.155 ansible_user=root
+[master]
+k8-c ansible_host=192.168.50.96
 
 [workers]
-kube1 ansible_host=192.168.50.219 ansible_user=root
-kube2 ansible_host=192.168.50.53 ansible_user=root
-
-#[all:vars]
-#ansible_python_interpreter=/usr/bin/python3
+k8-1 ansible_host=192.168.50.171
+k8-2 ansible_host=192.168.50.17
