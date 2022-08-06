@@ -1,7 +1,7 @@
 ---
 mysql_db_name: "rinorg"
 mysql_root_password: "2eJpVKBtG9u"
-app_user: "ubuntu"
+app_user: "rkane"
 http_host: "rinizon.org"
 http_conf: "rinizon.org.conf"
 http_port: "80"
