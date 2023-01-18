@@ -1,10 +1,11 @@
 import yfinance as yf
 
-# define the ticker symbol
-tickerSymbol = 'GME'
+def stock_checker(stock_ticker):
+    stock_info = yf.Ticker(stock_ticker)
+    stock_data = stock_info.info
+    stock_history = stock_info.history(period='1d')
+    print("Ticker: ", stock_ticker)
+    print("Last Close: ", stock_data['regularMarketPrice'])
+    print("Volume: ", stock_history['Volume'].iloc[-1])
 
-# get data on this ticker
-tickerData = yf.Ticker(tickerSymbol)
-
-# info on the company
-print(tickerData.info)
+stock_checker("AAPL")
