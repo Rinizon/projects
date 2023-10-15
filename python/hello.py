@@ -1,2 +1,8 @@
-from datetime import date
-print(date.today())
+print("Welcome to the greeter program")
+name = input("Enter your name: ")
+print("Greetings " + name)
+
+print("Calculaor program")
+first_number = input("first number: ")
+second_number = input("second number: ")
+print(int(first_number) + int(second_number))
