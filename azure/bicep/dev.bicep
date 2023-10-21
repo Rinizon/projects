@@ -1,14 +1,11 @@
-targetScope = 'subscription'
-param location string = 'Central US'
+param location string = 'East US'
 param vmName string = 'myvm'
 param lbName string = 'mylb'
-param vnetName string = 'myvnet'
-param subnetName string = 'mysubnet'
-param adminUsername string = 'azadmin'
-param adminPassword string = 'P@ssword123!' securestring
+param adminUsername string = 'adminuser'
+param adminPassword string
 
-resource vnet 'Microsoft.Network/virtualNetworks@2021-03-01' = {
-  name: vnetName
+resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
+  name: '${vmName}-vnet'
   location: location
   properties: {
     addressSpace: {
@@ -16,7 +13,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-03-01' = {
     }
     subnets: [
       {
-        name: subnetName
+        name: 'subnet1'
         properties: {
           addressPrefix: '10.0.0.0/24'
         }
@@ -25,7 +22,15 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-03-01' = {
   }
 }
 
-resource lb 'Microsoft.Network/loadBalancers@2020-12-01' = {
+resource publicIP 'Microsoft.Network/publicIPAddresses@2021-05-01' = {
+  name: '${vmName}-pip'
+  location: location
+  properties: {
+    publicIPAllocationMethod: 'Dynamic'
+  }
+}
+
+resource lb 'Microsoft.Network/loadBalancers@2021-05-01' = {
   name: lbName
   location: location
   properties: {
@@ -33,9 +38,7 @@ resource lb 'Microsoft.Network/loadBalancers@2020-12-01' = {
       {
         name: 'LoadBalancerFrontEnd'
         properties: {
-          publicIPAddress: {
-            id: resourceId('Microsoft.Network/publicIPAddresses', 'myPublicIp')
-          }
+          publicIPAddress: publicIP
         }
       }
     ]
@@ -48,26 +51,43 @@ resource lb 'Microsoft.Network/loadBalancers@2020-12-01' = {
       {
         name: 'HttpProbe'
         properties: {
-          protocol: 'Http'
+          protocol: 'Tcp'
           port: 80
         }
       }
     ]
     loadBalancingRules: [
       {
-        name: 'HttpRule'
+        name: 'HttpRule1'
         properties: {
           frontendIPConfiguration: {
-            id: frontEndIpConfigurationId(lb, 'LoadBalancerFrontEnd')
+            id: lb.properties.frontendIPConfigurations[0].id
           }
           backendAddressPool: {
-            id: backendAddressPoolId(lb, 'BackendAddressPool')
+            id: lb.properties.backendAddressPools[0].id
           }
           probe: {
-            id: probeId(lb, 'HttpProbe')
+            id: lb.properties.probes[0].id
           }
           protocol: 'Tcp'
           frontendPort: 80
+          backendPort: 80
+        }
+      }
+      {
+        name: 'HttpRule2'
+        properties: {
+          frontendIPConfiguration: {
+            id: lb.properties.frontendIPConfigurations[0].id
+          }
+          backendAddressPool: {
+            id: lb.properties.backendAddressPools[0].id
+          }
+          probe: {
+            id: lb.properties.probes[0].id
+          }
+          protocol: 'Tcp'
+          frontendPort: 81
           backendPort: 80
         }
       }
@@ -78,9 +98,6 @@ resource lb 'Microsoft.Network/loadBalancers@2020-12-01' = {
 resource vm 'Microsoft.Compute/virtualMachines@2022-03-01' = {
   name: vmName
   location: location
-  dependsOn: [
-    lb
-  ]
   properties: {
     hardwareProfile: {
       vmSize: 'Standard_DS2_v2'
@@ -92,16 +109,13 @@ resource vm 'Microsoft.Compute/virtualMachines@2022-03-01' = {
     }
     storageProfile: {
       imageReference: {
-        publisher: 'Canonical',
-        offer: 'UbuntuServer',
-        sku: '22.04-LTS',
+        publisher: 'Canonical'
+        offer: 'UbuntuServer'
+        sku: '20.04-LTS'
         version: 'latest'
       }
       osDisk: {
         createOption: 'FromImage'
-        managedDisk: {
-          storageAccountType: 'Premium_LRS'
-        }
       }
     }
     networkProfile: {
