@@ -42,16 +42,16 @@ param vmSize string = 'Standard_D4s_v3'
 ])
 param OSVersion string = '2022-datacenter-azure-edition'
 
-@description('Linux Sku')
-@allowed([
-  'vs-2019-ent-latest-win11-n-gen2'
-  'vs-2019-pro-general-win11-m365-gen2'
-  'vs-2019-comm-latest-win11-n-gen2'
-  'vs-2019-ent-general-win10-m365-gen2'
-  'vs-2019-ent-general-win11-m365-gen2'
-  'vs-2019-pro-general-win10-m365-gen2'
-])
-param imageSku string = 'vs-2019-ent-latest-win11-n-gen2'
+// @description('Linux Sku')
+// @allowed([
+//   'vs-2019-ent-latest-win11-n-gen2'
+//   'vs-2019-pro-general-win11-m365-gen2'
+//   'vs-2019-comm-latest-win11-n-gen2'
+//   'vs-2019-ent-general-win10-m365-gen2'
+//   'vs-2019-ent-general-win11-m365-gen2'
+//   'vs-2019-pro-general-win10-m365-gen2'
+// ])
+// param imageSku string = 'vs-2019-ent-latest-win11-n-gen2'
 
 @description('Security Type of the Virtual Machine.')
 @allowed([
