@@ -1,5 +1,0 @@
-az group create -l centralus -n dev
-
-az vm create -g dev -n rhel9 --image
-
-az vm create -g dev -n rhel9 --image RedHat:RHEL:9-lvm-gen2:9.0.2022090601 --admin-username azadmin --size Standard_B1s --generate-ssh-keys
