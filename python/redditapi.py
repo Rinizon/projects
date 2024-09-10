@@ -57,9 +57,21 @@ subreddit = reddit_read_only.subreddit("wallstreetbets")
 # top_posts.to_csv("Top Posts.csv", index=True)
 
 # URL of the post
-url = "https://www.reddit.com/r/IAmA/comments/m8n4vt/\
-im_bill_gates_cochair_of_the_bill_and_melinda/"
+url = "https://www.reddit.com/r/wallstreetbets/comments/1fcysma/what_are_your_moves_tomorrow_september_10_2024/"
  
 # Creating a submission object
 submission = reddit_read_only.submission(url=url)
 
+from praw.models import MoreComments
+
+post_comments = []
+
+for comment in submission.comments:
+	if type(comment) == MoreComments:
+		continue
+
+	post_comments.append(comment.body)
+
+# creating a dataframe
+comments_df = pd.DataFrame(post_comments, columns=['comment'])
+comments_df
