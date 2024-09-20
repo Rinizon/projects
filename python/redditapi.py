@@ -9,18 +9,18 @@ reddit_read_only = praw.Reddit(client_id="K1bJ8sPZLLJxe5pgdgk-Tg",		 # your clie
 subreddit = reddit_read_only.subreddit("wallstreetbets")
 
 # Display the name of the Subreddit
-#print("Display Name:", subreddit.display_name)
+print("Display Name:", subreddit.display_name)
 
 # Display the title of the Subreddit
-#print("Title:", subreddit.title)
+print("Title:", subreddit.title)
 
 # Display the description of the Subreddit
-#print("Description:", subreddit.description)
+print("Description:", subreddit.description)
 
-# Display top 5 posts on the Subreddit
-# for post in subreddit.hot(limit=5):
-#     print(post.title)
-#     print()
+# # Display top 5 posts on the Subreddit
+# # for post in subreddit.hot(limit=5):
+# print(post.title)
+# print()
 
 # posts = subreddit.top("month")
 # # Scraping the top posts of the current month
