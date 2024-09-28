@@ -4,6 +4,6 @@
 terraform apply -auto-approve
 
 # Output the SSH private key to a text file
-terraform output -raw ssh_private_key > ~/.ssh/azkey
+terraform output -raw private_key_data > ~/.ssh/azkey
 
-echo "SSH private key has been saved to ssh_private_key.txt"
+echo "SSH private key has been saved to your SSH directory"
