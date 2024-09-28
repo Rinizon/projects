@@ -16,8 +16,8 @@ variable "username" {
   default     = "azadmin"
 }
 
-variable "vm_name"  {
-  type        = string
-  description = "The name of the VM"
-  default     = "web"
-}
+# variable "vm_name"  {
+#   type        = string
+#   description = "The name of the VM"
+#   default     = "web"
+# }
