@@ -89,9 +89,17 @@ resource "azurerm_storage_account" "my_storage_account" {
   account_replication_type = "LRS"
 }
 
+# Create random name for VM
+resource "random_string" "random_name" {
+  length  = 8
+  special = false
+  upper   = false
+  number  = false
+}
+
 # Create virtual machine
 resource "azurerm_linux_virtual_machine" "my_terraform_vm" {
-  name                  = var.vm_name
+  name                  = "vm-${random_string.random_name.result}"
   location              = azurerm_resource_group.rg.location
   resource_group_name   = azurerm_resource_group.rg.name
   network_interface_ids = [azurerm_network_interface.my_terraform_nic.id]
