@@ -89,7 +89,7 @@ resource "azurerm_storage_account" "my_storage_account" {
   account_replication_type = "LRS"
 }
 
-# Create random name for VM
+# Create random name and hostname for VM
 resource "random_string" "random_name" {
   length  = 8
   special = false
@@ -118,7 +118,7 @@ resource "azurerm_linux_virtual_machine" "my_terraform_vm" {
     version   = "latest"
   }
 
-  computer_name  = "web"
+  computer_name  = "vm-${random_string.random_name.result}"
   admin_username = var.username
 
   admin_ssh_key {
