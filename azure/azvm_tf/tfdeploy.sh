@@ -5,4 +5,5 @@ terraform apply -auto-approve
 
 # Output the SSH private key to a text file
 terraform output -raw private_key_data > ~/.ssh/azkey
+chmod 600 ~/.ssh/azkey
 echo "SSH private key has been saved to ~/.ssh/azkey"
